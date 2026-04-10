@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>Sonuçlar</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+<h1>📊 Akıllı Proje Analiz Sonuçları</h1>
+
+<!-- GRAFİK -->
+
+<canvas id="chart" style="max-width: 90%; margin: auto;"></canvas>
+
+<div class="container">
+
+{% for p in projects %}
+
+<div class="card">
+
+```
+<h2>{{ p.name }} ({{ p.owner }})</h2>
+
+<p>⭐ Yıldız: {{ p.stars }} | 🍴 Fork: {{ p.forks }}</p>
+<p>🐞 Issue: {{ p.issues }}</p>
+<p>📅 Güncelleme: {{ p.updated_at }}</p>
+<p>📊 Skor: {{ p.score }}</p>
+
+<!-- ML KATEGORİ -->
+<p>🤖 ML Kategori:
+{% if p.cluster == 0 %}
+    🔴 Düşük Kalite
+{% elif p.cluster == 1 %}
+    🟡 Orta Kalite
+{% else %}
+    🟢 Yüksek Kalite
+{% endif %}
+</p>
+
+<p>📌 Açıklama: {{ p.description }}</p>
+
+<a href="{{ p.url }}" target="_blank">🔗 GitHub'da Aç</a>
+```
+
+</div>
+{% endfor %}
+
+</div>
+
+<!-- CHART.JS -->
+
+<script>
+let names = [{% for p in projects %}"{{p.name}}",{% endfor %}]
+let scores = [{% for p in projects %}{{p.score}},{% endfor %}]
+let clusters = [{% for p in projects %}{{p.cluster}},{% endfor %}]
+
+new Chart(document.getElementById("chart"), {
+    type: 'bar',
+    data: {
+        labels: names,
+        datasets: [
+        {
+            label: 'Proje Skorları',
+            data: scores
+        },
+        {
+            label: 'ML Kategorisi (0-1-2)',
+            data: clusters
+        }]
+    }
+})
+</script>
+
+</body>
+</html>
